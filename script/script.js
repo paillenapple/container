@@ -1,83 +1,116 @@
-const deck = document.getElementById("deck");
-const containerClass = document.getElementsByClassName("container");
-const countClass = document.getElementsByClassName("count");
-let count = 0;
-
-
-function toggleLoading() {
-	const toggleButton = document.getElementById("toggle");
-	toggleButton.addEventListener("click", function() {
-		if (toggleButton.textContent === "start loading") {
-			for (let i = 0; i < containerClass.length; i++) {
-				containerClass[i].disabled = false;
-				toggleButton.textContent = "stop loading";
-			}
-		} else {
-			for (let i = 0; i < containerClass.length; i++) {
-				containerClass[i].disabled = true;
-				toggleButton.textContent = "start loading";
-			}
-		}
-	});
+function generateContainer(color) {
+/*
+** 
+**
+*/
+	const svgElt = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	const rectElt = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+	svgElt.setAttribute("version", "1.1");
+	svgElt.setAttribute("class", "brick")
+	svgElt.setAttribute("width", "50");
+	svgElt.setAttribute("height", "25");
+	rectElt.setAttribute("class", color);
+	rectElt.setAttribute("width", "50");
+	rectElt.setAttribute("height", "25");
+	rectElt.setAttribute("fill", color);
+	rectElt.setAttribute("stroke", "black");
+	rectElt.setAttribute("stroke-width", "2");
+	document.getElementById("deck").appendChild(svgElt);
+	svgElt.appendChild(rectElt);
 };
 
-function erase() {
-	const eraser = document.getElementById("erase");
-	eraser.addEventListener("click", function() {
-		deck.innerHTML = "";
-		count = 0;
-		for (var i = 0; i < countClass.length; i++) {
-			countClass[i].textContent = count;
+//---------------------------------------------------------------------------//
+
+function getRandomContainerColor() {
+/*
+** 
+**
+*/
+	const randomColorNumber = (Math.floor(Math.random() * 4)) + 1;
+	switch (randomColorNumber) {
+		case 1:
+			return "red";
+			break;
+		case 2:
+			return "green";
+			break;
+		case 3:
+			return "blue";
+			break;
+		case 4:
+			return "yellow";
+			break;
+	}
+};
+const displayContainer = generateContainer(getRandomContainerColor());
+
+//---------------------------------------------------------------------------//
+
+function displayFullDeck() {
+/*
+** 
+**
+*/
+	for (let i = 1; i < 50; i++) {
+		if ((i % 10 === 0) && (i !== 0)) {
+			set10ContainerLayer();
 		}
-	});
+		generateContainer(getRandomContainerColor());
+	}
 };
 
-function addContainer(color) {
-	if ((count % 10 === 0) && (count !== 0)) {
-		addBrTag();
+//---------------------------------------------------------------------------//
+
+function set10ContainerLayer() {
+/*
+** 
+**
+*/
+	const brElt = document.createElement("br");
+	document.getElementById("deck").appendChild(brElt);
+};
+
+//---------------------------------------------------------------------------//
+
+function displayContainersCount() {
+/*
+** 
+**
+*/
+	const redContainersCount = document.getElementsByClassName("red").length + " red containers left";
+	const greenContainersCount = document.getElementsByClassName("green").length + " green containers left";
+	const blueContainersCount = document.getElementsByClassName("blue").length + " blue containers left";
+	const yellowContainersCount = document.getElementsByClassName("yellow").length + " yellow containers left";
+	document.getElementById("redContainersLeft").textContent = redContainersCount;
+	document.getElementById("greenContainersLeft").textContent = greenContainersCount;
+	document.getElementById("blueContainersLeft").textContent = blueContainersCount;
+	document.getElementById("yellowContainersLeft").textContent = yellowContainersCount;
+};
+
+//---------------------------------------------------------------------------//
+
+function unloadContainer() {
+	for (var i = 0; i < document.getElementsByClassName("brick").length; i++) {
+		document.getElementsByClassName("brick")[i].addEventListener("click", function(e) {
+			e.target.parentNode.removeChild(e.target);
+			displayContainersCount();
+		});
 	}
-	const span = document.createElement("span");
-	const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
-	const container = document.createElementNS("http://www.w3.org/2000/svg","rect");
-	span.className = "containers";
-	svg.setAttribute("version", "1.1");
-	svg.setAttribute("width", "50");
-	svg.setAttribute("height", "25");
-	container.setAttribute("width", "50");
-	container.setAttribute("height", "25");
-	container.setAttribute("fill", color);
-	container.setAttribute("stroke", "black");
-	container.setAttribute("stroke-width", "1");
-	deck.appendChild(span);
-	span.appendChild(svg);
-	svg.appendChild(container);
-	/* console.log("top-left : " + container.getBoundingClientRect().top + ", "+ container.getBoundingClientRect().left); */
-	count += 1;
-}
+};
 
-function countContainers(color) {
-	document.getElementById("" + color + "Count").textContent =
-	  parseInt(document.getElementById("" + color + "Count").textContent) + 1;
-	document.getElementById("totalCount").textContent = count;
-}
+//---------------------------------------------------------------------------//
 
-function addBrTag() {
-	const brTag = document.createElement("br");
-	deck.appendChild(brTag);
-}
+function displayGame() {
+/*
+** 
+**
+*/
+	displayFullDeck();
+	displayContainersCount();
+	unloadContainer();
+};
 
+//---------------------------------------------------------------------------//
 
+displayGame();
 
-
-for (let i = 0; i < containerClass.length; i++) {
-	for (let j = 0; j < countClass.length; j++) {
-		countClass[j].textContent = 0;
-	}
-	containerClass[i].addEventListener("click", function(e) {
-		addContainer(e.target.id);
-		countContainers(e.target.id);
-	});
-}
-
-toggleLoading();
-erase();
