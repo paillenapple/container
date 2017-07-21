@@ -4,40 +4,12 @@ body {
 	justify-content: flex-start;
 	align-items: center;
 
-	font-family: Georgia, sans-serif;
+	font-family: Ubuntu, Georgia, sans-serif;
+	font-size: 16px;
 }
 
 h1 {
-	font-family: Arial, sans-serif;
 	text-decoration: underline;
-}
-
-button {
-	background-color: white;
-	border: 2px solid black;
-	border-radius: 3px;
-	padding: 5px;
-	transition: all ease 0.4s;
-}
-
-#redContainersLeft {
-	background-color: rgba(255,0,0,0.5);
-}
-
-#greenContainersLeft {
-	background-color: rgba(0,255,0,0.5);
-}
-
-#blueContainersLeft {
-	background-color: rgba(0,0,255,0.5);
-}
-
-#yellowContainersLeft {
-	background-color: rgba(255,255,0,0.5);
-}
-
-svg:not(:last-of-type) {
-	margin-right: 5px;
 }
 
 main {
@@ -45,4 +17,41 @@ main {
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
+}
+
+button {
+	font-family: Ubuntu, Arial, sans-serif;
+	font-weight: bold;
+	background-color: white;
+	border: 2px solid black;
+	border-radius: 3px;
+	padding: 5px;
+	transition: all ease 0.4s;
+}
+
+#remainingRedContainers {
+	background-color: rgba(255,0,0,0.5);
+}
+
+#remainingGreenContainers {
+	background-color: rgba(0,255,0,0.5);
+}
+
+#remainingBlueContainers {
+	background-color: rgba(0,0,255,0.5);
+}
+
+#remainingYellowContainers {
+	background-color: rgba(255,255,0,0.5);
+}
+
+svg:not(:last-of-type) {
+	margin-right: 5px;
+}
+
+#alert {
+	font-family: Ubuntu, sans-serif;
+	font-size: 1.2rem;
+	font-weight: bold;
+	text-decoration: underline;
 }
