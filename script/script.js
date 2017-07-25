@@ -136,45 +136,116 @@ function displayContainersCount() {
  */
 
 function redBricks(arr) {
-	if (arr.length < 5) {
+	if (arr.length <= 5) {
 		return true;
 	} else {
-		let sliced = arr.slice(-5);
+		let sliced = arr.slice(-6, -1);
 		if (sliced.indexOf("hsl(0, 80%, 50%)") !== -1) {
 			return true;
 		} else {
+
 			return false;
 		}
 	}
 };
 
+function greenBricks(arr) {
+	if (arr.length <= 1) {
+		return true;
+	} else {
+		if (arr[arr.length-2] === "hsl(0, 80%, 50%)") {
+			return false;
+		} else {
+			return true;
+		}
+	}
+};
+
+function blueBricks(colorArr, idArr) {
+	const x = idArr[idArr.length-2];
+	const y = idArr[idArr.length-1];
+	if (colorArr[colorArr.length-2] === "hsl(240, 80%, 50%)") {
+		if ((x >= 0 && x < 10) && (y >= 0 && y < 10) ||
+		  (x >= 10 && x < 20) && (y >= 10 && y < 20) ||
+		  (x >= 20 && x < 30) && (y >= 20 && y < 30) ||
+		  (x >= 30 && x < 40) && (y >= 30 && y < 40) ||
+		  (x >= 40 && x < 50) && (y >= 40 && y < 50)) {
+			return false;
+		} else {
+			return true
+		}
+	} else {
+		return true;
+	}
+};
+
+function yellowBricks(colorArr, idArr) {
+	if (idArr.length === 1) {
+		return true;
+	} else {
+		const x = idArr[idArr.length-2].split("");
+		const y = idArr[idArr.length-1].split("");
+		if (colorArr[colorArr.length-2] === "hsl(60, 80%, 50%)") {
+			if (x[x.length-1] === y[y.length-1]) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return true;
+		}
+	}
+}
+
 function unloadContainer() {
 	let score = 0;
 	document.getElementById("score").innerHTML = score + " $";
 	const unloadedContainersColorArray = [];
+	const unloadedContainersIdArray = [];
+	const scoreArray = [];
+	const serie = ["x"];
+	
 	for (let i = 0; i < document.getElementsByClassName("brick").length; i++) {
 		document.getElementsByTagName("rect")[i].addEventListener("click", function(e) {
 			if (isRemovable(e.target)) {
 				if (document.getElementById("alert").style.visibility === "visible") {
 					document.getElementById("alert").style.visibility = "hidden";
 				}
+				unloadedContainersColorArray.push(e.target.getAttribute("fill"));
+				unloadedContainersIdArray.push(e.target.getAttribute("id"));
 				switch (e.target.getAttribute("fill")) {
 					case "hsl(0, 80%, 50%)":
-						redBricks(unloadedContainersColorArray);
-						break;
+						if (redBricks(unloadedContainersColorArray)) {
+							score = displayScore(e.target, unloadedContainersColorArray, score, 10, 0, serie);
+							break;
+						} else {
+							score = displayScore(e.target, unloadedContainersColorArray, score, 0, 30, serie);
+							break;
+						}
 					case "hsl(120, 80%, 50%)":
-						console.log("green")
+						if(greenBricks(unloadedContainersColorArray)) {
+							score = displayScore(e.target, unloadedContainersColorArray, score, 10, 0, serie);
+						} else {
+							score = displayScore(e.target, unloadedContainersColorArray, score, 0, 30, serie);
+						}
 						break;
 					case "hsl(240, 80%, 50%)":
-						console.log("blue")
+						if(blueBricks(unloadedContainersColorArray, unloadedContainersIdArray)) {
+							score = displayScore(e.target, unloadedContainersColorArray, score, 10, 0, serie);
+						} else {
+							score = displayScore(e.target, unloadedContainersColorArray, score, 0, 30, serie);
+						}
 						break;
 					case "hsl(60, 80%, 50%)":
-						console.log("yellow")
+						if(yellowBricks(unloadedContainersColorArray, unloadedContainersIdArray)) {
+							score = displayScore(e.target, unloadedContainersColorArray, score, 10, 0, serie);
+						} else {
+							score = displayScore(e.target, unloadedContainersColorArray, score, 0, 30, serie);
+						}
 						break;
 				}
 				e.target.parentNode.removeChild(e.target);
 				displayContainersCount();
-				score = displayScore(e.target, unloadedContainersColorArray, score);
 			} else {
 				cannotUnloadAlert();
 			}	
@@ -182,20 +253,37 @@ function unloadContainer() {
 	}
 };
 
-function displayScore(target, arr, score) {	
-	arr.push(target.getAttribute("fill"));
-	for (let i = arr.length-1; i < arr.length; i++) {
-		if (arr.length === 1 ||
-		  arr[i-1] !== target.getAttribute("fill")) {
-			score += 10;
-		} else if (arr[i-1] === target.getAttribute("fill") &&
-		  arr[i-2] === target.getAttribute("fill")) {
-			score += 30;
-		} else if (arr[i-1] === target.getAttribute("fill")) {
-			score += 20;
-		}
+function displayScore(target, colorArr, score, plus, minus, serie) {
+	for (let i = colorArr.length-1; i < colorArr.length; i++) {
+		if (plus) {
+			if (colorArr[i] === colorArr[i-1]) {
+				serie.push("x");
+				if (serie.length >= 3) {
+					score += 3 * plus;
+				} else if (serie.length === 2) {
+					score += 2 * plus;
+				} else {
+					score += plus;
+				}
+			} else {
+				for (let j = serie.length; j > 1; j--) {
+					serie.pop();
+				}
+				score += plus;
+			}
+		} else {
+			for (let j = serie.length; j > 0; j--) {
+				serie.pop();
+			}
+			score -= minus;
+		}	
 	}
-	document.getElementById("score").innerHTML = score + ".000 $";
+
+	if (score) {
+		document.getElementById("score").innerHTML = score + ".000 $";
+	} else {
+		document.getElementById("score").innerHTML = score + " $";
+	}
 	return score;
 };
 
@@ -244,7 +332,6 @@ function getRemainingContainersId() {
 			remainingContainersArray.push(rectElt[i].getAttribute("id"));
 		}
 	}
-	console.log(remainingContainersArray);
 }
 
 //---------------------------------------------------------------------------//
