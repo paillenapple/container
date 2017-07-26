@@ -14,32 +14,70 @@
 			<h1>containers</h1>	
 		</header>
 		<main>
-			<p>
-				<div>
+			<div>
+				<p id="intro">
+					Welcome to Baltimore, Maryland, guy !<br />
+					You're at the head of a dock workers team, now, and I can swear that you'll have no time to get bored !<br />
+					Well... A ship's just berthed over there, anyway. Rally the troops, and get crackin' !
+				</p>
+			</div>
+			<div>
+				<h2>rules:</h2>
+			</div>
+			<div id="rules">
+				<ul>
+					<li>// unload all containers and try to make a maximum of money from it. //</li>
+					<li>// there are four sorts of legal containers: <span class="red">red</span>, <span class="green">green</span>, <span class="blue">blue</span> and <span class="yellow">yellow</span> ones. //</li>
+					<li>// you must start emptying the cargo from the above. a warning message will be displayed if you
+					 click on a wrong container. //</li>
+					<li>// a <span class="red">red</span> container should be removed at least every 5 containers. //</li>
+					<li>// a <span class="green">green</span> container shouldn't be removed after a <span class="red">red</span> one. //</li>
+					<li>// a <span class="blue">blue</span> container shouldn't be removed after another <span class="blue">blue</span> container located in the same row. //</li>
+					<li>// a <span class="yellow">yellow</span> container shouldn't be removed after another <span class="yellow">yellow</span> container located in the same colum. //</li>
+					<li>// in order to make more bucks, or to avoid facing a lose-big situation, you can hire up to 3
+					 extra dockers. By clicking on the extra docker button, 3 randomly-selected of your containers will turn into another
+					 color. //</li>
+					<li>// you don't really know who extra dockers are, and they might be malicious guys. For each color conversion, there's a 20% probability that a container converts into an illegal <span class="black">black</span> container, full of smuggled goods, clothes, drugs, or even prostitutes. //</li>
+					<li>// a <span class="black">black</span> container must be removed after a 4 differently-colored containers streak
+					 (a <span class="red">red</span> one, a <span class="green">green</span> one,
+					 a <span class="blue">blue</span> one and a <span class="yellow">yellow</span> one, whatever the order). //</li>
+					<li>// if removed correctly, a legal container will make your gains increase by 10.000$. if not, your
+					 gains will decrease by 30.000$. //</li>
+					<li>// by removing two consecutive evenly-colored containers, gains will be multiplied by 2. by removing 3+
+					 of them, gains will be multiplied by 3. //</li>
+					<li>// if removed correctly, an illegal container will make your gains increase by 50.000$. if not, your
+					 gains will decrease by 150.000$. //</li>
+				</ul>
+			</div>
+			<div>
+				<p>
 					<button class="remainingContainers" id="remainingRedContainers"></button>
 					<button class="remainingContainers" id="remainingGreenContainers"></button>
 					<button class="remainingContainers" id="remainingBlueContainers"></button>
 					<button class="remainingContainers" id="remainingYellowContainers"></button>
 					
-				</div>
-				<br />
-				<div>
-					<button id="dockers">Gestion des extra dockers à faire</button>
-				</div>
-			</p>
-			<p>
-				<div id="deck">
-					
-				</div>
-			</p>
-				<div>
-					<button id="alert" disabled></button>
-				</div>
-			<p>
-				<div id="score">
-					
-				</div>
-			</p>
+				</p>
+			</div>
+			
+			<div>
+
+				<p><button id="dockers"></button></p>
+			</div>
+
+			<div id="game">
+				<p id="top">top</p>
+				<p id="deck"></p>
+				<p id="bottom">bottom</p>
+			</div>
+			
+			<div>
+				<p><button id="alert"></button></p>
+			</div>
+
+			<div>
+				<p id="score"></p>
+			</div>
+
 		</main>
 		<footer>
 			<button id="reload">new game</button>

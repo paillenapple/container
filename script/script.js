@@ -13,7 +13,7 @@
 function displayFullDeck() {
 	for (let i = 0; i < 50; i++) {
 		if ((i % 10 === 0) && (i !== 0)) {
-			set10ContainerLayer();
+			brElt();
 		}
 		generateContainer(getRandomContainerColor(), i);
 	}
@@ -22,13 +22,13 @@ function displayFullDeck() {
 //---------------------------------------------------------------------------//
 
 /**
- * @function set10ContainerLayer()
+ * @function brElt()
  * (=> inserts a <br /> tag)
  *
  * @const {method} brElt - a <br> tag creating method
  */
 
-function set10ContainerLayer() {
+function brElt() {
 	const brElt = document.createElement("br");
 	document.getElementById("deck").appendChild(brElt);
 };
@@ -92,6 +92,7 @@ function generateContainer(color, index) {
 };
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 /**
  * @function displayContainersCount()
@@ -119,6 +120,16 @@ function displayContainersCount() {
 };
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 /**
  * @function unloadContainer()
@@ -135,68 +146,6 @@ function displayContainersCount() {
  * (=> displays a 5-second alert when clicking on an already empty storage location)
  */
 
-function redBricks(arr) {
-	if (arr.length <= 5) {
-		return true;
-	} else {
-		let sliced = arr.slice(-6, -1);
-		if (sliced.indexOf("hsl(0, 80%, 50%)") !== -1) {
-			return true;
-		} else {
-
-			return false;
-		}
-	}
-};
-
-function greenBricks(arr) {
-	if (arr.length <= 1) {
-		return true;
-	} else {
-		if (arr[arr.length-2] === "hsl(0, 80%, 50%)") {
-			return false;
-		} else {
-			return true;
-		}
-	}
-};
-
-function blueBricks(colorArr, idArr) {
-	const x = idArr[idArr.length-2];
-	const y = idArr[idArr.length-1];
-	if (colorArr[colorArr.length-2] === "hsl(240, 80%, 50%)") {
-		if ((x >= 0 && x < 10) && (y >= 0 && y < 10) ||
-		  (x >= 10 && x < 20) && (y >= 10 && y < 20) ||
-		  (x >= 20 && x < 30) && (y >= 20 && y < 30) ||
-		  (x >= 30 && x < 40) && (y >= 30 && y < 40) ||
-		  (x >= 40 && x < 50) && (y >= 40 && y < 50)) {
-			return false;
-		} else {
-			return true
-		}
-	} else {
-		return true;
-	}
-};
-
-function yellowBricks(colorArr, idArr) {
-	if (idArr.length === 1) {
-		return true;
-	} else {
-		const x = idArr[idArr.length-2].split("");
-		const y = idArr[idArr.length-1].split("");
-		if (colorArr[colorArr.length-2] === "hsl(60, 80%, 50%)") {
-			if (x[x.length-1] === y[y.length-1]) {
-				return false;
-			} else {
-				return true;
-			}
-		} else {
-			return true;
-		}
-	}
-}
-
 function unloadContainer() {
 	let score = 0;
 	document.getElementById("score").innerHTML = score + " $";
@@ -208,9 +157,8 @@ function unloadContainer() {
 	for (let i = 0; i < document.getElementsByClassName("brick").length; i++) {
 		document.getElementsByTagName("rect")[i].addEventListener("click", function(e) {
 			if (isRemovable(e.target)) {
-				if (document.getElementById("alert").style.visibility === "visible") {
-					document.getElementById("alert").style.visibility = "hidden";
-				}
+				window.clearTimeout(timeoutId);
+				document.getElementById("alert").style.visibility = "hidden";
 				unloadedContainersColorArray.push(e.target.getAttribute("fill"));
 				unloadedContainersIdArray.push(e.target.getAttribute("id"));
 				switch (e.target.getAttribute("fill")) {
@@ -243,6 +191,13 @@ function unloadContainer() {
 							score = displayScore(e.target, unloadedContainersColorArray, score, 0, 30, serie);
 						}
 						break;
+					case "hsl(0, 0%, 0%)":
+						if(blackBricks(unloadedContainersColorArray)) {
+							score = displayScore(e.target, unloadedContainersColorArray, score, 50, 0, serie);
+						} else {
+							score = displayScore(e.target, unloadedContainersColorArray, score, 0, 150, serie);
+						}
+						break;
 				}
 				e.target.parentNode.removeChild(e.target);
 				displayContainersCount();
@@ -252,6 +207,192 @@ function unloadContainer() {
 		});
 	}
 };
+
+//---------------------------------------------------------------------------//
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+function isRemovable(target) {
+	let targetId = target.getAttribute("id");
+	if (document.getElementsByClassName("brick")[targetId-10] === undefined ||
+		  !document.getElementsByClassName("brick")[targetId-10].childNodes.length) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+//---------------------------------------------------------------------------//
+
+/**
+ * @function alreadyUnloadedAlert()
+ * (=> displays a 5-second alert when clicking on an already empty storage location)
+ */
+let timeoutId;
+
+function eraseAlert() {
+	timeoutId = window.setTimeout(function() {
+		document.getElementById("alert").style.visibility = "hidden";
+	}, 5000);
+}
+
+function cannotUnloadAlert() {
+	window.clearTimeout(timeoutId);
+	document.getElementById("alert").innerHTML = "";
+	document.getElementById("alert").style.visibility = "visible";
+	document.getElementById("alert").innerHTML += "you cannot remove this container " +
+ 	 " => please start emptying on top of the stockpile";
+	eraseAlert();
+};
+
+//---------------------------------------------------------------------------//
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+function redBricks(arr) {
+	if (arr.length <= 5) {
+		return true;
+	} else {
+		const sliced = arr.slice(-6, -1);
+		if (sliced.indexOf("hsl(0, 80%, 50%)") !== -1) {
+			return true;
+		} else {
+
+			return false;
+		}
+	}
+};
+
+//---------------------------------------------------------------------------//
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+function greenBricks(arr) {
+	if (arr.length <= 1) {
+		return true;
+	} else {
+		if (arr[arr.length-2] === "hsl(0, 80%, 50%)") {
+			return false;
+		} else {
+			return true;
+		}
+	}
+};
+
+//---------------------------------------------------------------------------//
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+function blueBricks(colorArr, idArr) {
+	const x = idArr[idArr.length-2];
+	const y = idArr[idArr.length-1];
+	if (colorArr[colorArr.length-2] === "hsl(240, 80%, 50%)") {
+		if ((x >= 0 && x < 10) && (y >= 0 && y < 10) ||
+		  (x >= 10 && x < 20) && (y >= 10 && y < 20) ||
+		  (x >= 20 && x < 30) && (y >= 20 && y < 30) ||
+		  (x >= 30 && x < 40) && (y >= 30 && y < 40) ||
+		  (x >= 40 && x < 50) && (y >= 40 && y < 50)) {
+			return false;
+		} else {
+			return true
+		}
+	} else {
+		return true;
+	}
+};
+
+//---------------------------------------------------------------------------//
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+function yellowBricks(colorArr, idArr) {
+	if (idArr.length === 1) {
+		return true;
+	} else {
+		const x = idArr[idArr.length-2].split("");
+		const y = idArr[idArr.length-1].split("");
+		if (colorArr[colorArr.length-2] === "hsl(60, 80%, 50%)") {
+			if (x[x.length-1] === y[y.length-1]) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return true;
+		}
+	}
+}
+
+//---------------------------------------------------------------------------//
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+function blackBricks(arr) {
+	const colors = ["hsl(0, 80%, 50%)", "hsl(120, 80%, 50%)", "hsl(240, 80%, 50%)", "hsl(60, 80%, 50%)"];
+	const sliced = arr.slice(-5, -1);
+	for (var i = 0; i < colors.length; i++) {
+		if (!sliced.includes(colors[i])) {
+			console.log(false);
+			return false;
+		}
+	}
+	console.log(true);
+	return true;
+}
+
+
+//---------------------------------------------------------------------------//
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 function displayScore(target, colorArr, score, plus, minus, serie) {
 	for (let i = colorArr.length-1; i < colorArr.length; i++) {
@@ -287,85 +428,17 @@ function displayScore(target, colorArr, score, plus, minus, serie) {
 	return score;
 };
 
-function isRemovable(target) {
-	let targetId = target.getAttribute("id");
-	if (document.getElementsByClassName("brick")[targetId-10] === undefined ||
-		  !document.getElementsByClassName("brick")[targetId-10].childNodes.length) {
-		return true;
-	} else {
-		return false;
-	}
-}
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 /**
- * @function alreadyUnloadedAlert()
- * (=> displays a 5-second alert when clicking on an already empty storage location)
- */
-
-function cannotUnloadAlert() {
-	document.getElementById("alert").innerHTML = "";
-	document.getElementById("alert").style.visibility = "visible";
-	document.getElementById("alert").innerHTML += "you cannot remove this container " +
-	  " => please start emptying on top of the stockpile";
-	window.setTimeout(function() {
-  		document.getElementById("alert").style.visibility = "hidden";
-	}, 5000);
-};
-
-//---------------------------------------------------------------------------//
-
-/**
- * @function getRemainingContainersId()
- * (=> creates an empty array, then fills it through a loop with indexes of all
- *   containers remaining onscreen)
  *
- * @const {array} remainingContainersArray - an empty array
- * @const {method} rectElt - a <rect> tag name collecting method
+ *
+ *
+ *
+ *
+ *
  */
-
-function getRemainingContainersId() {
-	const remainingContainersArray = [];
-	const rectElt = document.getElementsByTagName("rect");
-	for (let i = 0; i < rectElt.length; i++) {
-		if (rectElt[i].getAttribute("id") !== null) {
-			remainingContainersArray.push(rectElt[i].getAttribute("id"));
-		}
-	}
-}
-
-//---------------------------------------------------------------------------//
-
-function remainingContainersArray() {
-	const remainingContainersArray = [];
-	const rectElt = document.getElementsByTagName("rect");
-	for (let i = 0; i < rectElt.length; i++) {
-		if (rectElt[i].getAttribute("id") !== null) {
-			remainingContainersArray.push(rectElt[i].getAttribute("id"));
-		}
-	}
-	return remainingContainersArray;
-};
-
-//---------------------------------------------------------------------------//
-
-function selectRemainingContainers() {
-	const rectElt = document.getElementsByTagName("rect");
-	let max3 = 3;
-	if (rectElt.length < 3) {
-		max3 = rectElt.length;
-	}
-	const remainingContainers = remainingContainersArray();
-	const randomContainers = [];
-	for (var i = 0; i < max3; i++) {
-		const randomRemainingContainer = Math.floor(Math.random()*remainingContainers.length);
-		randomContainers.push(remainingContainers[randomRemainingContainer]);
-		remainingContainers.splice(randomRemainingContainer, 1);
-	}
-	return randomContainers;
-};
-
-//---------------------------------------------------------------------------//
 
 function extraDocker() {
 	const dockers = document.getElementById("dockers");
@@ -387,6 +460,15 @@ function extraDocker() {
 
 //---------------------------------------------------------------------------//
 
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
 function switchContainersColors() {
 	const threeRemainingContainers = selectRemainingContainers();
 	threeRemainingContainers.forEach(function(cont) {
@@ -406,6 +488,65 @@ function switchContainersColors() {
 };
 
 //---------------------------------------------------------------------------//
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+
+function selectRemainingContainers() {
+	const rectElt = document.getElementsByTagName("rect");
+	let max3 = 3;
+	if (rectElt.length < 3) {
+		max3 = rectElt.length;
+	}
+	const remainingContainers = remainingContainersArray();
+	const randomContainers = [];
+	for (var i = 0; i < max3; i++) {
+		const randomRemainingContainer = Math.floor(Math.random()*remainingContainers.length);
+		randomContainers.push(remainingContainers[randomRemainingContainer]);
+		remainingContainers.splice(randomRemainingContainer, 1);
+	}
+	return randomContainers;
+};
+
+//---------------------------------------------------------------------------//
+
+/**
+ * @function remainingContainersArray()
+ * (=> creates an empty array, then fills it through a loop with indexes of all
+ *   containers remaining onscreen)
+ *
+ * @const {array} remainingContainersArray - an empty array
+ * @const {method} rectElt - a <rect> tag name collecting method
+ */
+
+function remainingContainersArray() {
+	const remainingContainersArray = [];
+	const rectElt = document.getElementsByTagName("rect");
+	for (let i = 0; i < rectElt.length; i++) {
+		if (rectElt[i].getAttribute("id") !== null) {
+			remainingContainersArray.push(rectElt[i].getAttribute("id"));
+		}
+	}
+	return remainingContainersArray;
+};
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 
 function reloadGame() {
 	document.getElementById("reload").addEventListener("click", function() {
