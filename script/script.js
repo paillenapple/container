@@ -53,7 +53,7 @@ function brElt() {
 
 /**
  * @function getRandomContainerColor()
- * (=> set a random color)
+ * (=> sets a random color)
  *
  * @const {number | integer} randomColorNumber - a random integer between 0
  *   and 3
@@ -280,7 +280,7 @@ function cannotUnloadAlert() {
  * @var {number|integer} timeoutId - the current setTimeout() id
  *
  * @function hideAlert()
- * (=> hide the alert after 5 seconds)
+ * (=> hides the alert after 5 seconds)
  */
 let timeoutId;
 
@@ -382,9 +382,9 @@ function blueBricks(colorArr, idArr) {
  * @returns {boolean} - true if the movement is allowed; false otherwise
  *
  * @const {arr} x - the second last clicked container's id attribute (integer), then
-     splitted ("") into an array
+ *   splitted ("") into an array
  * @const {arr} y - the last clicked container's id attribute (integer), then
-     splitted ("") into an array
+ *   splitted ("") into an array
  */
 
 function yellowBricks(colorArr, idArr) {
@@ -487,7 +487,7 @@ function displayScore(target, colorArr, score, plus, minus, singleColorStreak) {
 //---------------------------------------------------------------------------//
 
 /**
-* @function extraDocker()
+ * @function extraDocker()
  * (=> when clicking on the "extra docker" button, decrements the number of
  *   extra dockers by 1 until 0)
  *
@@ -606,7 +606,7 @@ function selectRemainingContainers() {
  * @returns {array} - returns the array filled with remaining containers' id
  *
  * @const {array} remainingContainersArray - an empty array to be filled with
-     remaining containers' id
+ *   remaining containers' id
  * @const {method} rectElt - a "rect" tagname DOM objects collecting method
  * @var {number|integer} - the loop index
  */
