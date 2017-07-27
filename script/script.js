@@ -1,10 +1,24 @@
+/**
+ * @author Silvere MAZIERE <silvere.maziere@protonmail.com>
+ */
+
+// 1- displayFullDeck() function and subfunctions
+// 2- displayContainersCount() function
+// 3- displayContainersCount() function and subfunction
+// 4- extraDocker() function and subfunctions
+// 5- reloadGame() function
+// 6- displayGame() function
+
 //---------------------------------------------------------------------------//
-//displayFullDeck() function and subfunctions--------------------------------//
+//-1---displayFullDeck() function and subfunctions---------------------------//
 //---------------------------------------------------------------------------//
 
 /**
  * @function displayFullDeck() 
- * (=> displays 50 containers)
+ * (=> displays x50 containers)
+ * (=> creates a new row every 10 containers)
+ *
+ * @var {number|integer} i - the loop index
  */
 
 function displayFullDeck() {
@@ -23,7 +37,7 @@ function displayFullDeck() {
 
 /**
  * @function brElt()
- * (=> inserts a <br /> tag)
+ * (=> creates a new row)
  *
  * @const {method} brElt - a <br> tag creating method
  */
@@ -41,8 +55,8 @@ function brElt() {
  * @function getRandomContainerColor()
  * (=> set a random color)
  *
- * @const {number | integer} randomColorNumber - a random integer between 0 and 3
- *   which defines a random color (R, G, B, or Y)
+ * @const {number | integer} randomColorNumber - a random integer between 0
+ *   and 3
  */
 
 function getRandomContainerColor() {
@@ -69,8 +83,9 @@ function getRandomContainerColor() {
 
 /**
  * @function generateContainer()
- * (=> generates a SVG random-colored rectangle)
- * @param {string} color - the random color defined by getRandomContainerColor() function
+ * (=> generates a container)
+ * @param {string} color - the random hsl() color set by the
+ *   getRandomContainerColor() function
  * @param {number | integer} index - the displayfullDeck() function loop index
  *
  * @const {method} svgElt - a SVG object creating method
@@ -100,17 +115,17 @@ function generateContainer(color, index) {
 };
 
 //---------------------------------------------------------------------------//
-//displayContainersCount() function------------------------------------------//
+//-2---displayContainersCount() function-------------------------------------//
 //---------------------------------------------------------------------------//
 
 /**
  * @function displayContainersCount()
- * (=> displays the number of each color class' objects remaining onscreen)
+ * (=> displays how many of each color class' containers remaining onscreen)
  *
- * @const {string} redContainersCount - displays the number of remaining red containers
- * @const {string} GreenContainersCount - displays the number of remaining green containers
- * @const {string} blueContainersCount - displays the number of remaining blue containers
- * @const {string} yellowContainersCount - displays the number of remaining yellow containers
+ * @const {string} redContainersCount - number of remaining red containers
+ * @const {string} GreenContainersCount - number of remaining green containers
+ * @const {string} blueContainersCount - number of remaining blue containers
+ * @const {string} yellowContainersCount - number of remaining yellow containers
  */
 
 function displayContainersCount() {
@@ -131,19 +146,21 @@ function displayContainersCount() {
 };
 
 //---------------------------------------------------------------------------//
-//displayContainersCount() function and subfunctions-------------------------//
+//-3---displayContainersCount() function and subfunctions--------------------//
 //---------------------------------------------------------------------------//
 
 /**
  * @function unloadContainer()
- * (=> allows to remove a container by clicking on it)
+ * (=> removes a container by clicking on it)
  *
+ * @var {number|integer} score - the initial (= 0) then current score/gains
  * @const {array} unloadedContainersColorArray - an empty array to be filled with each
  *  removed container's fill attribute
  * @const {array} unloadedContainersIdArray - an empty array to be filled with each
  *  removed container's id attribute
  * @const {array} singleColorStreak - an array to be incremented with an "x" for each removed
  *  container in the current color streak
+ * @var {number|integer} i - the loop index
  */
 
 function unloadContainer() {
@@ -157,7 +174,8 @@ function unloadContainer() {
 	
 	for (let i = 0; i < document.getElementsByClassName("brick").length; i++) {
 		
-		document.getElementsByTagName("rect")[i].addEventListener("click", function(e) {
+		document.getElementsByTagName("rect")[i].addEventListener("click",
+		  function(e) {
 			
 			if (isRemovable(e.target)) {
 				
@@ -171,11 +189,10 @@ function unloadContainer() {
 					case "hsl(0, 80%, 50%)":
 						if (redBricks(unloadedContainersColorArray)) {
 							score = displayScore(e.target, unloadedContainersColorArray, score, 10, 0, singleColorStreak);
-							break;
 						} else {
 							score = displayScore(e.target, unloadedContainersColorArray, score, 0, 30, singleColorStreak);
-							break;
 						}
+						break;
 					case "hsl(120, 80%, 50%)":
 						if(greenBricks(unloadedContainersColorArray)) {
 							score = displayScore(e.target, unloadedContainersColorArray, score, 10, 0, singleColorStreak);
@@ -221,7 +238,7 @@ function unloadContainer() {
 
 /**
  * @function isRemovable()
- * (=> defines if a container is removable (= is on top of the stockpile) or not)
+ * (=> defines if a container is removable (= on top of the stockpile) or not)
  * @param {object} target - the clicked container
  * @returns {boolean} - true if removable, false otherwise
  *
@@ -245,14 +262,10 @@ function isRemovable(target) {
 /**
  * @function cannotUnloadAlert()
  * (=> displays an alert when clicking on an irremovable container)
- *
- * @function hideAlert()
- * (=> hide the alert after 5 seconds)
  */
 
-let timeoutId;
-
 function cannotUnloadAlert() {
+
 	window.clearTimeout(timeoutId);
 	document.getElementById("alert").innerHTML = "";
 	document.getElementById("alert").style.visibility = "visible";
@@ -261,7 +274,18 @@ function cannotUnloadAlert() {
 	hideAlert();
 };
 
+//---------------------------------------------------------------------------//
+
+/**
+ * @var {number|integer} timeoutId - the current setTimeout() id
+ *
+ * @function hideAlert()
+ * (=> hide the alert after 5 seconds)
+ */
+let timeoutId;
+
 function hideAlert() {
+
 	timeoutId = window.setTimeout(function() {
 		document.getElementById("alert").style.visibility = "hidden";
 	}, 5000);
@@ -272,10 +296,11 @@ function hideAlert() {
 /**
  * @function redBricks()
  * (=> when clicking on a red container, defines if the movement is allowed)
- * @param {array} colorArr - the now-filled array containing each removed container's fill attribute
- * @returns {boolean} - true if, according to the rules, the movement is allowed; false otherwise
+ * @param {array} colorArr - the array filled with each removed container's
+ *   hsl() color
+ * @returns {boolean} - true if the movement is allowed; false otherwise
  *
- * const {array} last5Colors - last five values of the (colorArr) array
+ * const {array} last5Colors - last five values of colorArr parameter
  */
 
 function redBricks(colorArr) {
@@ -297,8 +322,9 @@ function redBricks(colorArr) {
 /**
  * @function greenBricks()
  * (=> when clicking on a green container, defines if the movement is allowed)
- * @param {array} colorArr - the now-filled array containing each removed container's fill attribute
- * @returns {boolean} - true if, according to the rules, the movement is allowed; false otherwise
+ * @param {array} colorArr - the array filled with each removed container's
+ *   hsl() color
+ * @returns {boolean} - true if the movement is allowed; false otherwise
  */
 
 function greenBricks(colorArr) {
@@ -318,9 +344,10 @@ function greenBricks(colorArr) {
 /**
  * @function blueBricks()
  * (=> when clicking on a blue container, defines if the movement is allowed)
- * @param {array} colorArr - the now-filled array containing each removed container's fill attribute
- * @param {array} idArr - the now-filled array containing each removed container's id attribute
- * @returns {boolean} - true if, according to the rules, the movement is allowed; false otherwise
+ * @param {array} colorArr - the array filled with each removed container's
+ *   hsl() color
+ * @param {array} idArr - the array filled with each removed container's id
+ * @returns {boolean} - true if the movement is allowed; false otherwise
  *
  * @const {string} x - the second last clicked container's id attribute
  * @const {string} y - the last clicked container's id attribute
@@ -349,9 +376,10 @@ function blueBricks(colorArr, idArr) {
 /**
  * @function yellowBricks()
  * (=> when clicking on a yellow container, defines if the movement is allowed)
- * @param {array} colorArr - the now-filled array containing each removed container's fill attribute
- * @param {array} idArr - the now-filled array containing each removed container's id attribute
- * @returns {boolean} - true if, according to the rules, the movement is allowed; false otherwise
+ * @param {array} colorArr - the array filled with each removed container's
+ *   hsl() color
+ * @param {array} idArr - the array filled with each removed container's id
+ * @returns {boolean} - true if the movement is allowed; false otherwise
  *
  * @const {arr} x - the second last clicked container's id attribute (integer), then
      splitted ("") into an array
@@ -382,11 +410,12 @@ function yellowBricks(colorArr, idArr) {
 /**
  * @function blackBricks()
  * (=> when clicking on a black container, defines if the movement is allowed)
- * @param {array} colorArr - the now-filled array containing each removed container's fill attribute
- * @returns {boolean} - true if, according to the rules, the movement is allowed; false otherwise
+ * @param {array} colorArr - the array filled with each removed container's
+ *   hsl() color
+ * @returns {boolean} - true if the movement is allowed; false otherwise
  *
- * @const {arr} colors - the RGBY array
- * @const {arr} last4Colors - last four values of the (colorArr) array
+ * @const {arr} colors - an array filled with RGBY hsl() colors
+ * @const {arr} last4Colors - last four values of the colorArr parameter
  */
 
 function blackBricks(colorArr) {
@@ -408,10 +437,11 @@ function blackBricks(colorArr) {
  * @function displayScore()
  * (=> increments/decrements and displays score/gains)
  * @param {object} target - the clicked container 
- * @param {array} colorArr - the now-filled array containing each removed container's fill attribute
+ * @param {array} colorArr - the array filled with each removed container's
+ *   hsl() color
  * @param {number | integer} score - score/gains as before this turn's increment/decrement
- * @param {number | integer} plus - number to be incremented to score parameter
- * @param {number | integer} minus - number to be decremented from score parameter
+ * @param {number | integer} plus - value to be incremented to score parameter
+ * @param {number | integer} minus - value to be decremented from score parameter
  * @param {array} singleColorStreak - an array filled with as many "x" as the current
      color streak length
  */
@@ -453,13 +483,17 @@ function displayScore(target, colorArr, score, plus, minus, singleColorStreak) {
 };
 
 //---------------------------------------------------------------------------//
-//extraDocker() function and subfunctions------------------------------------//
+//-4---extraDocker() function and subfunctions-------------------------------//
 //---------------------------------------------------------------------------//
 
 /**
 * @function extraDocker()
- * (=> when clicking on the "extra docker" button, decrements the number of extra
-     dockers by 1 - min = 0, max = 3)
+ * (=> when clicking on the "extra docker" button, decrements the number of
+ *   extra dockers by 1 until 0)
+ *
+ * @const {method} dockers - a "dockers" id DOM object collecting method
+ * @var {number|integer} extraDockers - number of remaining extra dockers;
+ *   player starts with 3 of them
  */
 
 function extraDocker() {
@@ -486,14 +520,18 @@ function extraDocker() {
 
 /**
  * @function switchContainersColors()
- * (=> switches from basic to new container's color after extraDocker() function has been called)
+ * (=> switches from basic to new container's color after extraDocker()
+ *   function has been called)
  *
- * @const {array} threeRemainingContainers - the return value of the selectRemainingContainers() function
- * @const {string} basicColor - container's color before extraDocker() function has been called
+ * @const {array} threeRemainingContainers - the return value of the
+ *   selectRemainingContainers() function
+ * @const {string} basicColor - container's hsl() color before extraDocker()
+ *  function has been called
+ * @var {string} newColor - the return value of the getRandomContainerColor()
+ *   function
  * @const {number | integer} blackMarket - a random integer between 0 and 4
-     which defines if the container is changed into an illegal container (a 20% chance
-     for each container) or not
-     
+ *   which defines if the container is changed into an illegal container (a 20%
+ *   chance for each container) or not
  */
 
 function switchContainersColors() {
@@ -523,13 +561,20 @@ function switchContainersColors() {
 
 /**
  * @function selectRemainingContainers()
- * (=> selects 0 to 3 containers among remaining containers and whose colors are designed to be changed)
- * @returns {array} - a now-filled array with 0 to 3 random container(s)
+ * (=> selects 0 to 3 containers among remaining containers whose colors are
+ *  designed to be changed after the extraDocker() function has been called)
+ * @returns {array} - an array filled with 0 to 3 random container(s)
  *
- * @const {method} rectElt - a <rect> objects collecting method
- * @const {array} remainingContainers - the return value of the remainingContainersArray() function
- * @const {array} randomContainers - an empty array to be filled with 0 to 3 random
-     container(s) object(s)
+ * @const {method} rectElt - a "rect" tagname DOM objects collecting method
+ * @var {number|integer} max3 - nb of containers whose color must be changed
+ *   after the extraDocker() function has been called (3 if 3+ remaining
+ *   containers, 2 if 2, 1 if 1)
+ * @const {array} remainingContainers - the return value of the
+ *   remainingContainersArray() function
+ * @var {number|integer} - the loop index
+ * @const {array} randomContainers - an empty array to be filled with 0 to 3
+ *   random container(s) object(s) (depending on the number of remaining
+ *   containers) 
  */
 
 function selectRemainingContainers() {
@@ -558,11 +603,12 @@ function selectRemainingContainers() {
  * @function remainingContainersArray()
  * (=> creates an empty array, then fills it through a loop with indexes of all
  *   containers remaining onscreen)
- * @returns {array} - returns the now-filled remainingContainersArray
+ * @returns {array} - returns the array filled with remaining containers' id
  *
  * @const {array} remainingContainersArray - an empty array to be filled with
      remaining containers' id
- * @const {method} rectElt - a <rect> objects collecting method
+ * @const {method} rectElt - a "rect" tagname DOM objects collecting method
+ * @var {number|integer} - the loop index
  */
 
 function remainingContainersArray() {
@@ -580,7 +626,7 @@ function remainingContainersArray() {
 };
 
 //---------------------------------------------------------------------------//
-//reloadGame() function------------------------------------------------------//
+//-5---reloadGame() function-------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 /**
@@ -596,12 +642,12 @@ function reloadGame() {
 };
 
 //---------------------------------------------------------------------------//
-//displayGame() function-----------------------------------------------------//
+//-6---displayGame() function------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 /**
  * @function displayGame()
- * (=> executes all previously described functions / displays game onscreen)
+ * (=> executes all previously described functions => displays game onscreen)
  */
 
 function displayGame() {
